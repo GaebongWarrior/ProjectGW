@@ -1,14 +1,57 @@
-Binaries
-DerivedDataCache
-Intermediate
-Saved
-.vscode
-.vs
-*.VC.db
-*.opensdf
-*.opendb
-*.sdf
-*.sln
-*.suo
-*.xcodeproj
-*.xcworkspace
+# Project-specific folders to ignore
+/Saved/
+/Intermediate/
+/DerivedDataCache/
+/Binaries/
+/Build/**/*.xcodeproj
+/Content/
+/.vs/
+/.vscode/
+/*.sln
+/*.opensdf
+/*.sdf
+/*.suo
+/*.VC.db
+/*.VC.opendb
+*.log
+*.tlog
+*.tmp
+
+# Ignore compiled object files
+*.obj
+*.pch
+*.pdb
+*.exe
+*.dll
+*.lib
+*.app
+*.dylib
+*.so
+
+# Ignore crash reports and log files
+*.log
+*.dmp
+
+# Ignore macOS specific files
+.DS_Store
+
+# Ignore Windows thumbnail cache
+Thumbs.db
+
+# Ignore Unreal auto-generated files
+*.generated.*
+*_C.cpp
+*_C.h
+
+# Ignore build system files
+Build/
+
+# Ignore user-specific files
+*.user
+*.userprefs
+*.sublime-workspace
+*.sublime-project
+
+# Optional: exclude Plugin intermediates (if any)
+Plugins/**/Binaries/
+Plugins/**/Intermediate/
