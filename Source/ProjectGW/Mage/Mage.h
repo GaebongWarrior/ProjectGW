@@ -44,11 +44,35 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void MoveRight(float InputAxis);
 
-	// 왼/오른쪽 입력을 위해 호출합니다.
+	// 시야 전환을 위해 호출합니다.	
 	UFUNCTION(BlueprintCallable)
 	void Look(const FVector2D Value);
 
+	// 달리기 시작을 위해 호출
+	UFUNCTION(BlueprintCallable)
+	void SprintStart();
+
+	// 달리기 종료를 위해 호출
+	UFUNCTION(BlueprintCallable)
+	void SprintEnd();
+
+
+	// 점프 시작을 위해 호출
+	UFUNCTION(BlueprintCallable)
+	void JumpStart();
+
+	// 점프 종료를 위해 호출
+	UFUNCTION(BlueprintCallable)
+	void JumpEnd();
+
+	// 점프 종료를 위해 호출
+	UFUNCTION(BlueprintCallable)
+	void Zoom(const float Value);
+
 public:
+	UPROPERTY()
+	UCharacterMovementComponent* MoveComponent; // 캐릭터 이동 컴포넌트 포인터
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

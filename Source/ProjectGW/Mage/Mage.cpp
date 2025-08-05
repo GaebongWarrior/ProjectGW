@@ -32,9 +32,10 @@ AMage::AMage()
 
 	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
 	// instead of recompiling to adjust them
-	GetCharacterMovement()->JumpZVelocity = 700.f;
+	GetCharacterMovement()->JumpZVelocity = 600.f; // 점프력
 	GetCharacterMovement()->AirControl = 0.35f; // 공중에서 방향전환
-	GetCharacterMovement()->MaxWalkSpeed = 500.f;
+	GetCharacterMovement()->GravityScale = 2.f; // 중력
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;// 마찰력
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;// 공중 마찰력
@@ -44,7 +45,7 @@ AMage::AMage()
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
+	CameraBoom->TargetArmLength = 600.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
 	// Create a follow camera
@@ -58,7 +59,8 @@ AMage::AMage()
 void AMage::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	MoveComponent = GetCharacterMovement(); // 캐릭터 이동 컴포넌트 설정
+	CameraBoom = FindComponentByClass<USpringArmComponent>(); // 스프링 암 컴포넌트 찾기
 }
 
 // Called every frame
@@ -113,7 +115,7 @@ void AMage::MoveRight(float AxisValue)
 
 void AMage::Look(const FVector2D Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Look: %s"), *Value.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("Look: %s"), *Value.ToString());
 	if (Controller != nullptr)
 	{
 		// add yaw and pitch input to controller
@@ -122,3 +124,36 @@ void AMage::Look(const FVector2D Value)
 	}
 
 }
+
+void AMage::SprintStart()
+{
+	if (MoveComponent) { MoveComponent->MaxWalkSpeed = 800.f; }
+}
+
+void AMage::SprintEnd()
+{
+	if (MoveComponent) { MoveComponent->MaxWalkSpeed = 300.f; } // 달리기 속도 설정
+}
+
+void AMage::JumpStart()
+{
+	Jump();
+}
+
+void AMage::JumpEnd()
+{
+	StopJumping();
+}
+
+void AMage::Zoom(const float Value)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Zoom: %f"), Value);
+	
+	if (CameraBoom)
+	{
+		CameraBoom->TargetArmLength = FMath::Clamp(CameraBoom->TargetArmLength - Value * 30.0f, 200.0f, 800.0f); // 줌 조절 Clmap는 거리 조절 기능
+		UE_LOG(LogTemp, Warning, TEXT("Zoom: %f"), Value);
+	}
+}
+
+

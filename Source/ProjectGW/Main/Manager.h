@@ -20,6 +20,7 @@ public:
 	UManager();
 
 	void Init();
+	void Shutdown();
 	virtual void SubscribeEvent() override;
 	virtual void UnSubscribeEvent() override;
 };

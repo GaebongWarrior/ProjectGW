@@ -14,6 +14,12 @@ void UManager::Init()
 	UE_LOG(LogTemp, Warning, TEXT("Manager Initialized"));
 }
 
+void UManager::Shutdown()
+{
+	// 초기화 작업을 진행
+	UE_LOG(LogTemp, Warning, TEXT("Manager Shutdowned"));
+}
+
 void UManager::SubscribeEvent()
 {
 	// 이벤트 생성 로직

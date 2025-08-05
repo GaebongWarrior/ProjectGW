@@ -21,6 +21,7 @@ void UProjectGWGameInstance::Init()
 
 void UProjectGWGameInstance::Shutdown()
 {
+	CharacterManager->Shutdown(); // 캐릭터 매니저 종료
 	Super::Shutdown();
 }
 
