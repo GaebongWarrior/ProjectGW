@@ -21,12 +21,12 @@ AMage::AMage()
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 	// 캐릭터 회전 설정 -> 회전 안함
 
 	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
+	GetCharacterMovement()->bOrientRotationToMovement = false; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
 	// 이동 방향에 따라 캐릭터 회전 및 회전속도 설정
 
@@ -34,7 +34,7 @@ AMage::AMage()
 	// instead of recompiling to adjust them
 	GetCharacterMovement()->JumpZVelocity = 600.f; // 점프력
 	GetCharacterMovement()->AirControl = 0.35f; // 공중에서 방향전환
-	GetCharacterMovement()->GravityScale = 2.f; // 중력
+	GetCharacterMovement()->GravityScale = 1.75f; // 중력
 	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;// 마찰력
@@ -52,7 +52,18 @@ AMage::AMage()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	
+	AimCameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("AimCameraBoom"));
+	AimCameraBoom->SetupAttachment(RootComponent);
+	AimCameraBoom->TargetArmLength = -25.0f; //
+	AimCameraBoom->SetRelativeLocation(FVector(0.0f, 0.0f, 60.0f)); // AimCameraBoom 위치 설정
+	AimCameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
+	// Create a aim camera	
+	AimCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("AimCamera"));
+	AimCamera->SetupAttachment(AimCameraBoom, USpringArmComponent::SocketName);
+	AimCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to armz
+	AimCamera->bAutoActivate = false; // AimCamera 비활성화
 }
 
 // Called when the game starts or when spawned
@@ -60,7 +71,9 @@ void AMage::BeginPlay()
 {
 	Super::BeginPlay();
 	MoveComponent = GetCharacterMovement(); // 캐릭터 이동 컴포넌트 설정
-	CameraBoom = FindComponentByClass<USpringArmComponent>(); // 스프링 암 컴포넌트 찾기
+	//CameraBoom = FindComponentByClass<USpringArmComponent>(); // 스프링 암 컴포넌트 찾기
+	FollowCamera = GetCamera("FollowCamera"); // FollowCamera 컴포넌트 찾기
+	AimCamera = GetCamera("AimCamera"); // AimCamera 컴포넌트 찾기
 }
 
 // Called every frame
@@ -149,11 +162,51 @@ void AMage::Zoom(const float Value)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Zoom: %f"), Value);
 	
-	if (CameraBoom)
+	//if (CameraBoom)
+	//{
+	//	CameraBoom->TargetArmLength = FMath::Clamp(CameraBoom->TargetArmLength - Value * 30.0f, 200.0f, 800.0f); // 줌 조절 Clmap는 거리 조절 기능
+	//	UE_LOG(LogTemp, Warning, TEXT("Zoom: %f"), Value);
+	//}
+}
+
+void AMage::Aim()
+{
+	if (!bIsAiming)
 	{
-		CameraBoom->TargetArmLength = FMath::Clamp(CameraBoom->TargetArmLength - Value * 30.0f, 200.0f, 800.0f); // 줌 조절 Clmap는 거리 조절 기능
-		UE_LOG(LogTemp, Warning, TEXT("Zoom: %f"), Value);
+		if (FollowCamera)
+			FollowCamera->IsActive() ? FollowCamera->Deactivate() : FollowCamera->Activate(); // FollowCamera 활성화/비활성화 토글
+		if (AimCamera)
+			AimCamera->IsActive() ? AimCamera->Deactivate() : AimCamera->Activate(); // AimCamera 활성화/비활성화 토글
 	}
 }
 
+void AMage::AimStart()
+{
+	bIsAiming = true; // 조준 상태 설정
+	FollowCamera->Deactivate(); // FollowCamera 비활성화
+	AimCamera->Activate(); // AimCamera 활성화
+}
 
+void AMage::AimEnd()
+{
+	if (bIsAiming)
+	{
+		AimCamera->Deactivate(); // AimCamera 비활성화
+		FollowCamera->Activate(); // FollowCamera 활성화
+		bIsAiming = false; // 조준 상태 해제
+	}
+	//UE_LOG(LogTemp, Warning, TEXT("AimEnd"));
+}
+
+UCameraComponent* AMage::GetCamera(FName Name)
+{
+	TArray<UCameraComponent*> Cameras;
+	GetComponents<UCameraComponent>(Cameras);
+	for (UCameraComponent* Camera : Cameras)
+	{
+		if (Camera && Camera-> GetFName() == Name)
+			return Camera; // 카메라 이름이 일치하는 경우 반환
+	}
+	UE_LOG(LogTemp, Warning, TEXT("No camera found with name: %s"), *Name.ToString());
+	return nullptr; // 일치하는 카메라가 없는 경우 nullptr 반환
+}

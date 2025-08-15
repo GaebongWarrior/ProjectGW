@@ -31,6 +31,9 @@ void UCharacterManager::SubscribeEvent()
 	OnCharacterJumpStartInput.AddDynamic(this, &UCharacterManager::JumpStartFired);
 	OnCharacterJumpEndInput.AddDynamic(this, &UCharacterManager::JumpEndFired);
 	OnZoomEventInput.AddDynamic(this, &UCharacterManager::ZoomFired);
+	OnAimEventInput.AddDynamic(this, &UCharacterManager::AimFired);
+	OnAimOnEventInput.AddDynamic(this, &UCharacterManager::AimOnFired);
+	OnAimOutEventInput.AddDynamic(this, &UCharacterManager::AimOutFired);
 	UE_LOG(LogTemp, Warning, TEXT("Event Binding End"));
 }
 
@@ -44,6 +47,9 @@ void UCharacterManager::UnSubscribeEvent()
 	OnCharacterJumpStartInput.RemoveDynamic(this, &UCharacterManager::JumpStartFired);
 	OnCharacterJumpEndInput.RemoveDynamic(this, &UCharacterManager::JumpEndFired);
 	OnZoomEventInput.RemoveDynamic(this, &UCharacterManager::ZoomFired);
+	OnAimEventInput.RemoveDynamic(this, &UCharacterManager::AimFired);
+	OnAimOnEventInput.RemoveDynamic(this, &UCharacterManager::AimOnFired);
+	OnAimOutEventInput.RemoveDynamic(this, &UCharacterManager::AimOutFired);
 	// 이벤트 구독 해제
 	UE_LOG(LogTemp, Warning, TEXT("Unsubscribed from Character Events"));
 }
@@ -87,7 +93,22 @@ void UCharacterManager::JumpEndFired()
 void UCharacterManager::ZoomFired(float Value)
 {
 	OnZoomEvent.Broadcast(Value); // 줌 이벤트 발생
-	UE_LOG(LogTemp, Warning, TEXT("ZoomFired: %f"), Value);	
+	//UE_LOG(LogTemp, Warning, TEXT("ZoomFired: %f"), Value);	
+}
+
+void UCharacterManager::AimFired()
+{
+	OnAimEvent.Broadcast(); // 조준 이벤트 발생
+}
+
+void UCharacterManager::AimOnFired()
+{
+	OnAimOnEvent.Broadcast(); // 조준 이벤트 발생
+}
+
+void UCharacterManager::AimOutFired()
+{
+	OnAimOutEvent.Broadcast(); // 조준 이벤트 발생
 }
 
 

@@ -32,6 +32,16 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCharacterJumpEndEvent);  // 점프 종료 �
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FZoomEventInput, float, Value); // 마우스 휠 줌 이벤트
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FZoomEvent, float, Value); // 마우스 휠 줌 이벤트
 
+// 조준(토글) 이벤트
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAimEventInput); // 조준 이벤트
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAimEvent); // 조준 이벤트
+
+// 조준(지속) 이벤트
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAimOnEventInput); // 조준 시작 이벤트 입력
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAimOnEvent); // 조준 시작 이벤트
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAimOutEventInput); // 조준 끝 이벤트 입력
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAimOutEvent); // 조준 끝 이벤트
+
 /**
  * 
  */
@@ -84,7 +94,23 @@ public:
 	UPROPERTY(BlueprintCallable, Category = "Events")
 	FZoomEventInput OnZoomEventInput; // 줌 이벤트 입력
 	UPROPERTY(BlueprintAssignable, Category = "Events")
-	FZoomEvent OnZoomEvent; // 줌 이벤트 입력
+	FZoomEvent OnZoomEvent; // 줌 이벤트
+
+	// 조준(토글) 이벤트
+	UPROPERTY(BlueprintCallable, Category = "Events")
+	FAimEventInput OnAimEventInput; // 조준 이벤트 입력
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FAimEvent OnAimEvent; // 조준 이벤트
+
+	// 조준(지속) 이벤트
+	UPROPERTY(BlueprintCallable, Category = "Events")
+	FAimOnEventInput OnAimOnEventInput; // 조준 시작 이벤트 입력
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FAimOnEvent OnAimOnEvent; // 조준 시작 이벤트
+	UPROPERTY(BlueprintCallable, Category = "Events")
+	FAimOutEventInput OnAimOutEventInput; // 조준 끝 이벤트 입력
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FAimOutEvent OnAimOutEvent; // 조준 끝 이벤트
 
 	// 이벤트 구독 및 해제 메소드 재정의--------------------------------------
 	void SubscribeEvent() override;
@@ -112,4 +138,11 @@ public:
 
 	UFUNCTION()
 	void ZoomFired(float Value);
+
+	UFUNCTION()
+	void AimFired();
+	UFUNCTION()
+	void AimOnFired();
+	UFUNCTION()
+	void AimOutFired();
 };

@@ -28,6 +28,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera; // 카메라 컴포넌트 선언
 
+	/** Camera boom positioning the camera behind the character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	USpringArmComponent* AimCameraBoom; //스프링 암을 이용해서 카메라를 다루는 컴포넌트 선언
+
+	/** Follow camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* AimCamera; // 카메라 컴포넌트 선언
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* IMC_OnLevelCharacter; // 입력 매핑 컨텍스트 선언
@@ -35,6 +43,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UCameraComponent* GetCamera(FName Name);
 
 	// 앞/뒤쪽 입력을 위해 호출합니다.
 	UFUNCTION(BlueprintCallable)
@@ -69,6 +79,15 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void Zoom(const float Value);
 
+
+	// 조준을 위해 호출
+	UFUNCTION(BlueprintCallable)
+	void Aim();
+	UFUNCTION(BlueprintCallable)
+	void AimStart();
+	UFUNCTION(BlueprintCallable)
+	void AimEnd();
+
 public:
 	UPROPERTY()
 	UCharacterMovementComponent* MoveComponent; // 캐릭터 이동 컴포넌트 포인터
@@ -78,5 +97,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+private:
+	bool bIsAiming = false;
 
 };
