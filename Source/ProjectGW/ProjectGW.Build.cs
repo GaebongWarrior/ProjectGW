@@ -17,19 +17,14 @@ public class ProjectGW : ModuleRules
 			"AIModule",
 			"StateTreeModule",
 			"GameplayStateTreeModule",
-			"UMG"
-		});
+			"UMG",
+			"Niagara"
+        });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 
 		PublicIncludePaths.AddRange(new string[] {
-			"ProjectGW",
-			"ProjectGW/Variant_Platforming",
-			"ProjectGW/Variant_Combat",
-			"ProjectGW/Variant_Combat/AI",
-			"ProjectGW/Variant_SideScrolling",
-			"ProjectGW/Variant_SideScrolling/Gameplay",
-			"ProjectGW/Variant_SideScrolling/AI"
+			"ProjectGW"
 		});
 
 		// Uncomment if you are using Slate UI
