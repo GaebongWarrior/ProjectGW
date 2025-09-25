@@ -34,6 +34,7 @@ void UCharacterManager::SubscribeEvent()
 	OnAimEventInput.AddDynamic(this, &UCharacterManager::AimFired);
 	OnAimOnEventInput.AddDynamic(this, &UCharacterManager::AimOnFired);
 	OnAimOutEventInput.AddDynamic(this, &UCharacterManager::AimOutFired);
+	OnAttackEventInput.AddDynamic(this, &UCharacterManager::AttackFired);
 	UE_LOG(LogTemp, Warning, TEXT("Event Binding End"));
 }
 
@@ -50,6 +51,7 @@ void UCharacterManager::UnSubscribeEvent()
 	OnAimEventInput.RemoveDynamic(this, &UCharacterManager::AimFired);
 	OnAimOnEventInput.RemoveDynamic(this, &UCharacterManager::AimOnFired);
 	OnAimOutEventInput.RemoveDynamic(this, &UCharacterManager::AimOutFired);
+	OnAttackEventInput.RemoveDynamic(this, &UCharacterManager::AttackFired);
 	// 이벤트 구독 해제
 	UE_LOG(LogTemp, Warning, TEXT("Unsubscribed from Character Events"));
 }
@@ -109,6 +111,11 @@ void UCharacterManager::AimOnFired()
 void UCharacterManager::AimOutFired()
 {
 	OnAimOutEvent.Broadcast(); // 조준 이벤트 발생
+}
+
+void UCharacterManager::AttackFired()
+{
+	OnAttackEvent.Broadcast(); // 조준 이벤트 발생
 }
 
 

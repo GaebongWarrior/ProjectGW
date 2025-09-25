@@ -42,6 +42,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAimOnEvent); // 조준 시작 이벤트
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAimOutEventInput); // 조준 끝 이벤트 입력
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAimOutEvent); // 조준 끝 이벤트
 
+// 조준(지속) 이벤트
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAttackInput); // 공격 시작 이벤트 입력
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAttackEvent); // 공격 시작 이벤트
+
 /**
  * 
  */
@@ -112,6 +116,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FAimOutEvent OnAimOutEvent; // 조준 끝 이벤트
 
+	// 공격 이벤트
+	UPROPERTY(BlueprintCallable, Category = "Events")
+	FAttackInput OnAttackEventInput; // 공격 이벤트 입력
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FAttackEvent OnAttackEvent; // 공격 이벤트
+
 	// 이벤트 구독 및 해제 메소드 재정의--------------------------------------
 	void SubscribeEvent() override;
 	void UnSubscribeEvent() override;
@@ -145,4 +155,7 @@ public:
 	void AimOnFired();
 	UFUNCTION()
 	void AimOutFired();
+
+	UFUNCTION()
+	void AttackFired();
 };

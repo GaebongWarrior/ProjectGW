@@ -3,6 +3,8 @@
 
 #include "Spell/NormalAttack.h"
 #include "Components/SphereComponent.h"
+#include "NiagaraSystem.h"
+#include "NiagaraComponent.h"
 
 ANormalAttack::ANormalAttack()
 {
@@ -15,14 +17,21 @@ ANormalAttack::ANormalAttack()
 		});
 	InitialLifeSpan = 10.f; // 생명주기 설정 (초 단위)
 	ProjectileMovement = CreateProjectileMovementComponent(100.f, 500.f);
-	EffectMeshComponent = LoadEffectMeshComponent(TEXT("/Game/FX/Mesh/sm_shild_01.sm_shild_01"));
-	CreateEffectComponent = LoadCreateEffectComponent(TEXT("/Game/FX/NS/Shield.Shield"));
+	CreateEffectComponent = LoadCreateEffectComponent(TEXT("/Game/FX/NS/Shield_start.Shield_start"));
+	EffectComponent = LoadEffectComponent(TEXT("/Game/FX/NS/Shield.Shield"));
+	DestroyEffectSystem = LoadDestroyEffectSystem(TEXT("/Game/FX/NS/Shield_end.Shield_end"));
 }
 // Called when the game starts or when spawned
 void ANormalAttack::BeginPlay()
 {
 	Super::BeginPlay();
 
+}
+
+
+void ANormalAttack::Destroyed()
+{
+	Super::Destroyed();
 }
 
 // Called every frame

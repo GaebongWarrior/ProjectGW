@@ -75,7 +75,7 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void JumpEnd();
 
-	// 점프 종료를 위해 호출
+	// 확대를 위해 호출
 	UFUNCTION(BlueprintCallable)
 	void Zoom(const float Value);
 
@@ -87,6 +87,10 @@ protected:
 	void AimStart();
 	UFUNCTION(BlueprintCallable)
 	void AimEnd();
+
+	// 공격을 위해 호출
+	UFUNCTION(BlueprintCallable)
+	void Attack();
 
 public:
 	UPROPERTY()

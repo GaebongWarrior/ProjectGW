@@ -5,6 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "NiagaraSystem.h"
 #include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 
 
 // Sets default values
@@ -19,7 +20,23 @@ ASpell::ASpell()
 void ASpell::BeginPlay()
 {
 	Super::BeginPlay();
+	CreateEffectComponent->OnSystemFinished.AddDynamic(this, &ASpell::OnCreateEffectFinished);
+	CreateEffectComponent->Activate(true);
 	
+}
+
+void ASpell::Destroyed()
+{
+	if (DestroyEffectSystem)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+            GetWorld(),
+            DestroyEffectSystem,
+            GetActorLocation(),
+            GetActorRotation()
+        );
+	}
+	Super::Destroyed();
 }
 
 // Called every frame
@@ -38,7 +55,7 @@ UNiagaraComponent* ASpell::LoadCreateEffectComponent(FString Path)
 	if (NS_Impact.Succeeded())
 	{
 		Comp->SetAsset(NS_Impact.Object);
-		Comp->bAutoActivate = true; // 자동 활성화
+		Comp->bAutoActivate = false;
 	}
 	else
 	{
@@ -48,19 +65,42 @@ UNiagaraComponent* ASpell::LoadCreateEffectComponent(FString Path)
 	return Comp;
 }
 
-UStaticMeshComponent* ASpell::LoadEffectMeshComponent(FString Path)
+UNiagaraComponent* ASpell::LoadEffectComponent(FString Path)
 {
-	UStaticMeshComponent* Comp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("EffectMeshComponent"));
+	UNiagaraComponent* Comp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("EffectComponent"));
 	Comp->SetupAttachment(RootComponent);
-	Comp->SetEnableGravity(false); // 중력 영향 없음
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(*Path);
-	if (MeshAsset.Succeeded())
+
+	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> NS_Impact(*Path);
+	if (NS_Impact.Succeeded())
 	{
-		Comp->SetStaticMesh(MeshAsset.Object);
+		Comp->SetAsset(NS_Impact.Object);
+		//Comp->bAutoActivate = true; // 자동 활성화
+		Comp->bAutoActivate = false;
 	}
 	else
 	{
-		Comp->SetStaticMesh(nullptr);
+		Comp->bAutoActivate = false;
 	}
+
 	return Comp;
+}
+
+UNiagaraSystem* ASpell::LoadDestroyEffectSystem(FString Path)
+{
+
+	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> NS_Impact(*Path);
+	if (NS_Impact.Succeeded())
+	{
+		return NS_Impact.Object;
+	}
+	else
+	{
+		return nullptr;
+	}
+
+}
+
+void ASpell::OnCreateEffectFinished(UNiagaraComponent* FinishedComp)
+{
+	EffectComponent->Activate(true);
 }

@@ -17,6 +17,11 @@ void AProjectileSpell::BeginPlay()
 	
 }
 
+void AProjectileSpell::Destroyed()
+{
+	Super::Destroyed();
+}
+
 void AProjectileSpell::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

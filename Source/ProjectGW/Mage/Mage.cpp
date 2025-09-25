@@ -198,6 +198,12 @@ void AMage::AimEnd()
 	//UE_LOG(LogTemp, Warning, TEXT("AimEnd"));
 }
 
+void AMage::Attack()
+{
+	// 공격 로직 구현
+	UE_LOG(LogTemp, Warning, TEXT("Attack"));
+}
+
 UCameraComponent* AMage::GetCamera(FName Name)
 {
 	TArray<UCameraComponent*> Cameras;
